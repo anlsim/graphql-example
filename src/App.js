@@ -26,22 +26,27 @@ const AnimeList = gql`
 function App() {
   const { loading, error, data } = useQuery(AnimeList)
   console.log(data?.Page?.media[0])
-  if (loading) return <>Loading</>
-  if (error) return <>{JSON.stringify(error)}</>
+  if(loading) return(<> Loading</>);
+  if(error) return(<>{JSON.stringify(error)}</>)
   return (
-    <>
-      <div>
-        <h1>Anime Lis</h1>
-        {data?.Page?.media.map((anime) => (
-          <>
-            <div>
-              <img src={anime.coverImage.medium} />
-            </div>
-          </>
-        ))}
-      </div>
-    </>
-  )
+   <div className="container"> 
+     <h1> 🐈 Anime List </h1>
+     <hr width="80%" />
+   {data?.Page?.media.map(anime => (
+     <>
+   <div className="card" >
+      <img    src={anime.coverImage.medium}/>
+      <div> 
+         <h1>{anime.title.english} </h1>
+           <div className="episodes" >Episodes  <b>{anime.episodes} </b></div>
+          <div  dangerouslySetInnerHTML={{__html: anime.description}} ></div> 
+      </div> 
+  </div>
+  <hr width="75%"/>
+ </>
+   ))}
+   </div>);
+  
 }
 
 export default App
