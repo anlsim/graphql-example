@@ -1,31 +1,39 @@
 import logo from './logo.svg'
 import './App.css'
-import { useQuery, gql } from '@apollo/client'
+import { useQuery, gql } from '@apollo/client';
+import React, { useState } from 'react';
+
 
 const AnimeList = gql`
-  query Query {
-    Page {
-      media {
-        siteUrl
-        title {
-          english
-          native
-        }
-        description
-        coverImage {
-          medium
-        }
-        bannerImage
-        volumes
-        episodes
+query($page: Int)  {
+  Page(page: $page) {
+    media {
+      siteUrl
+      title {
+        english
+        native
       }
+      description
+      coverImage {
+        medium
+      }
+      bannerImage
+      volumes
+      episodes
     }
   }
+}
 `
 
 function App() {
-  const { loading, error, data } = useQuery(AnimeList)
-  console.log(data?.Page?.media[0])
+  const [page, setPage] = useState(1);
+  const {loading, error, data} = useQuery(AnimeList , {  variables: { "page" : page }});
+  const NextPage = () => {
+    setPage(page+1);
+  }
+  const PreviousPage = () => {
+    setPage(page - 1);
+  }
   if(loading) return(<> Loading</>);
   if(error) return(<>{JSON.stringify(error)}</>)
   return (
@@ -35,7 +43,7 @@ function App() {
    {data?.Page?.media.map(anime => (
      <>
    <div className="card" >
-      <img    src={anime.coverImage.medium}/>
+      <img src={anime.coverImage.medium} alt=''/>
       <div> 
          <h1>{anime.title.english} </h1>
            <div className="episodes" >Episodes  <b>{anime.episodes} </b></div>
@@ -45,6 +53,11 @@ function App() {
   <hr width="75%"/>
  </>
    ))}
+    <div className="buttonContainer">
+    { page !== 1 && <button onClick={PreviousPage}> Previous Page</button> } 
+     <div className="pageText"> {page}</div>
+     <button onClick={NextPage}>  Next Page </button> 
+   </div>
    </div>);
   
 }
